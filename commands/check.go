@@ -36,11 +36,10 @@ func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 }
 
-// CheckCmd ...
+// CheckCmd command definition
 var CheckCmd = cli.Command{
-	Name:  "check",
-	Usage: "Check connectivity.",
-	// Action: NewDelete().delete,
+	Name:   "check",
+	Usage:  "Check connectivity.",
 	Action: actionCheck,
 	Flags: []cli.Flag{
 		cli.StringFlag{
@@ -73,7 +72,7 @@ func actionCheck(c *cli.Context) (err error) {
 	return runLoop(c, NewMyDNSClient())
 }
 
-// runLoop ...
+// runLoop run the loop that check if the network is up
 func runLoop(c *cli.Context, client DNSClient) (err error) {
 
 	intervalDuration, err := time.ParseDuration(c.String("interval"))
@@ -94,6 +93,7 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 
 }
 
+// runTest execute the DNS query.
 func runTest(client DNSClient, target string, server string) (duration time.Duration, err error) {
 	_, t, err := client.Exchange(target, server)
 
