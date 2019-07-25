@@ -8,21 +8,21 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Client interface
-type Client interface {
+// DNSClient interface
+type DNSClient interface {
 	Exchange(target string, server string) (msg *dns.Msg, rtt time.Duration, err error)
 }
 
-// DNSClient struct
-type DNSClient struct{}
+// MyDNSClient struct
+type MyDNSClient struct{}
 
-//NewDNSClient constructor for Client interface
-func NewDNSClient() Client {
-	return &DNSClient{}
+//NewMyDNSClient constructor for Client interface
+func NewMyDNSClient() DNSClient {
+	return &MyDNSClient{}
 }
 
 // Exchange real implementation of Exchange()
-func (client *DNSClient) Exchange(target string, server string) (msg *dns.Msg, rtt time.Duration, err error) {
+func (client *MyDNSClient) Exchange(target string, server string) (msg *dns.Msg, rtt time.Duration, err error) {
 
 	c := dns.Client{}
 	m := dns.Msg{}
@@ -70,11 +70,11 @@ var CheckCmd = cli.Command{
 
 // actionCheck placeholder function
 func actionCheck(c *cli.Context) (err error) {
-	return runLoop(c, NewDNSClient())
+	return runLoop(c, NewMyDNSClient())
 }
 
 // runLoop ...
-func runLoop(c *cli.Context, client Client) (err error) {
+func runLoop(c *cli.Context, client DNSClient) (err error) {
 
 	intervalDuration, err := time.ParseDuration(c.String("interval"))
 
@@ -94,7 +94,7 @@ func runLoop(c *cli.Context, client Client) (err error) {
 
 }
 
-func runTest(client Client, target string, server string) (duration time.Duration, err error) {
+func runTest(client DNSClient, target string, server string) (duration time.Duration, err error) {
 	_, t, err := client.Exchange(target, server)
 
 	return t, err
