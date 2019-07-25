@@ -1,11 +1,13 @@
 package commands
 
 import (
+	"digger/dd"
 	"time"
 
 	"github.com/miekg/dns"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"github.com/zorkian/go-datadog-api"
 )
 
 // DNSClient interface
@@ -86,6 +88,11 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 		log.Info("Latency is ", t)
 		if err != nil {
 			log.Error("Not able to reach remote DNS server, ", err)
+			title := "MyTitle"
+			event := datadog.Event{
+				Title: &title,
+			}
+			_ = dd.PostEvent("toto", "titi", event)
 			return err
 		}
 		time.Sleep(intervalDuration)
