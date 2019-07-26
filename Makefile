@@ -82,7 +82,3 @@ publish_release:
 	docker push "$(IMAGE_NAME):$(DRONE_TAG)"
 
 build_all: setup lint test build-app build
-
-.PHONY: run_dev_vault
-run_vault:
-	docker run -d --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -p 8200:8200 -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
