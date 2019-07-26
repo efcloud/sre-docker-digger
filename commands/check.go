@@ -1,13 +1,12 @@
 package commands
 
 import (
-	"digger/dd"
+	"digger/notifications"
 	"time"
 
 	"github.com/miekg/dns"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"github.com/zorkian/go-datadog-api"
 )
 
 // DNSClient interface
@@ -91,6 +90,9 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 			title := "MyTitle"
 			event := datadog.Event{
 				Title: &title,
+			event := notifications.Event{
+				Title: "Connectivity Issue",
+				Text:  "Remote peer is not reachable",
 			}
 			_ = dd.PostEvent("toto", "titi", event)
 			return err

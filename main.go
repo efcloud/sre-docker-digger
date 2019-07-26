@@ -21,6 +21,24 @@ func runCli() (app *cli.App) {
 	app.HelpName = "CLI tool to check network connectivity."
 	app.Version = version
 
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "enable-datadog",
+			Usage:  "Enable or not Datadog notification",
+			EnvVar: "DATADOG_API_KEY",
+			Value:  "true",
+		},
+		cli.StringFlag{
+			Name:   "api-key",
+			Usage:  "Datadog API key",
+			EnvVar: "DATADOG_API_KEY",
+		},
+		cli.StringFlag{
+			Name:   "app-key",
+			Usage:  "Datadog Application key",
+			EnvVar: "DATADOG_APP_KEY",
+		},
+	}
 	app.Commands = []cli.Command{
 		commands.CheckCmd,
 	}
