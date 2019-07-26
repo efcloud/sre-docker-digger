@@ -23,18 +23,18 @@ func runCli() (app *cli.App) {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:   "enable-datadog",
+			Name:   "datadog-enable",
 			Usage:  "Enable or not Datadog notification",
-			EnvVar: "DATADOG_API_KEY",
+			EnvVar: "DATADOG_ENABLE",
 			Value:  "true",
 		},
 		cli.StringFlag{
-			Name:   "api-key",
+			Name:   "dd-api-key",
 			Usage:  "Datadog API key",
 			EnvVar: "DATADOG_API_KEY",
 		},
 		cli.StringFlag{
-			Name:   "app-key",
+			Name:   "dd-app-key",
 			Usage:  "Datadog Application key",
 			EnvVar: "DATADOG_APP_KEY",
 		},

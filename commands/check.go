@@ -79,27 +79,35 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 	intervalDuration, err := time.ParseDuration(c.String("interval"))
 
 	if err != nil {
-		log.Error("Interval is correct it should be a duration in")
+		log.Error("Interval is correct it should be a duration in the following format '60s' or '5m'")
 	}
 
 	for {
 		t, err := runTest(client, c.String("target"), c.String("dns-server"))
-		log.Info("Latency is ", t)
+		log.Infof("Latency is %s", t)
 		if err != nil {
+
 			log.Error("Not able to reach remote DNS server, ", err)
-			title := "MyTitle"
-			event := datadog.Event{
-				Title: &title,
-			event := notifications.Event{
-				Title: "Connectivity Issue",
-				Text:  "Remote peer is not reachable",
+
+			eventText := "Remote peer " + c.String("dns-server") + " is not reachable"
+			notification := notifications.NewDiggerNotification(
+				"Connectivity Issue",
+				eventText,
+			)
+
+			err = notification.FireEvent(c)
+
+			if err != nil {
+				log.Errorf("An error occured when sending an event to Datadog: %v", err)
+			} else {
+				log.Info("Datadog event has been sent")
 			}
-			_ = dd.PostEvent("toto", "titi", event)
-			return err
+
 		}
 		time.Sleep(intervalDuration)
 	}
 
+	return nil
 }
 
 // runTest execute the DNS query.
