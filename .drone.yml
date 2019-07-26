@@ -43,6 +43,14 @@ steps:
   commands:
   - make test
 
+- name: upload coverage
+  image: renaudhager/go-ci:0.1.3
+  commands:
+    - /usr/local/bin/codecov.bash
+  environment:
+    CODECOV_TOKEN:
+      from_secret: CODECOV_TOKEN
+
 depends_on:
   - setup
 
@@ -67,6 +75,7 @@ steps:
 
 depends_on:
   - lint
+  - unit test
 
 ---
 kind: pipeline

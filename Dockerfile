@@ -1,15 +1,5 @@
 ARG SOURCE=golang:1.11
 
-# Lint stage
-FROM $SOURCE as lint
-
-RUN make in-docker-lint
-
-# Test stage
-FROM $SOURCE as test
-
-RUN make in-docker-test
-
 # Build the app
 FROM $SOURCE as builder
 

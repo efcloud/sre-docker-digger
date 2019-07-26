@@ -16,7 +16,7 @@ in-docker-lint:
 
 .PHONY: in-docker-test
 in-docker-test:
-	go test -coverprofile=coverage.out -v ./...
+	go test -coverprofile=/tmp/coverage.out -v ./...
 
 .PHONY: in-docker-build-app
 in-docker-build-app:
@@ -31,17 +31,18 @@ setup:
 
 .PHONY: lint
 lint:
-	docker build \
-		--build-arg SOURCE="$(IMAGE_NAME):$(VERSION)_setup" \
-		--tag="$(IMAGE_NAME):$(VERSION)_lint" \
-		--target=lint .
+	docker run \
+		"$(IMAGE_NAME):$(VERSION)_setup" \
+		make in-docker-lint
 
 .PHONY: test
 test:
-	docker build \
-		--build-arg SOURCE="$(IMAGE_NAME):$(VERSION)_setup" \
-		--tag="$(IMAGE_NAME):$(VERSION)_lint" \
-		--target=test .
+	docker run \
+		--name test \
+		"$(IMAGE_NAME):$(VERSION)_setup" \
+		make in-docker-test
+
+	docker cp test:/tmp/coverage.out .
 
 .PHONY: build-app
 build-app:
