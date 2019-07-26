@@ -107,7 +107,6 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 		time.Sleep(intervalDuration)
 	}
 
-	return nil
 }
 
 // runTest execute the DNS query.

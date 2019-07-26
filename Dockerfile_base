@@ -1,0 +1,16 @@
+# Build container
+FROM golang:1.11
+
+WORKDIR /go/src/digger
+
+RUN go get -u -v golang.org/x/lint/golint
+
+ENV GO111MODULE=on
+
+COPY go.mod .
+
+COPY go.sum .
+
+RUN go mod download
+
+COPY . .
