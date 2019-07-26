@@ -9,6 +9,11 @@ else
 	VERSION := $(DRONE_TAG)
 endif
 
+ifndef DRONE_BUILD_NUMBER
+	DRONE_BUILD_NUMBER := 0
+endif
+
+
 .PHONY: in-docker-lint
 in-docker-lint:
 	golint -set_exit_status .
@@ -31,18 +36,19 @@ setup:
 
 .PHONY: lint
 lint:
-	docker run \
+	docker run --rm \
 		"$(IMAGE_NAME):$(VERSION)_setup" \
 		make in-docker-lint
 
 .PHONY: test
 test:
 	docker run \
-		--name test \
+		--name "test-$(DRONE_BUILD_NUMBER)" \
 		"$(IMAGE_NAME):$(VERSION)_setup" \
 		make in-docker-test
 
-	docker cp test:/tmp/coverage.out .
+	docker cp "test-$(DRONE_BUILD_NUMBER)":/tmp/coverage.out .
+	docker rm "test-$(DRONE_BUILD_NUMBER)"
 
 .PHONY: build-app
 build-app:
