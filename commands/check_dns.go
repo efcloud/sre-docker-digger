@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"digger/dd"
 	"digger/notifications"
 	"time"
 
@@ -37,9 +38,9 @@ func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 }
 
-// CheckCmd command definition
-var CheckCmd = cli.Command{
-	Name:   "check",
+// CheckDNSCmd command definition
+var CheckDNSCmd = cli.Command{
+	Name:   "check-dns",
 	Usage:  "Check connectivity.",
 	Action: actionCheck,
 	Flags: []cli.Flag{
@@ -70,11 +71,19 @@ var CheckCmd = cli.Command{
 
 // actionCheck placeholder function
 func actionCheck(c *cli.Context) (err error) {
-	return runLoop(c, NewMyDNSClient())
+	return realActionCheck(c, dd.NewNotification())
+}
+
+func realActionCheck(c *cli.Context, datadogNotifier notifications.Notifier) (err error) {
+	if c.GlobalString("datadog-enable") == "true" {
+		return runLoop(c, NewMyDNSClient(), datadogNotifier)
+	}
+
+	return nil
 }
 
 // runLoop run the loop that check if the network is up
-func runLoop(c *cli.Context, client DNSClient) (err error) {
+func runLoop(c *cli.Context, client DNSClient, notifier notifications.Notifier) (err error) {
 
 	intervalDuration, err := time.ParseDuration(c.String("interval"))
 
@@ -83,19 +92,17 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 	}
 
 	for {
-		t, err := runTest(client, c.String("target"), c.String("dns-server"))
+		_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
+		// runTest(client, c, c.String("dns-server"))
 		log.Infof("Latency is %s", t)
 		if err != nil {
 
 			log.Error("Not able to reach remote DNS server, ", err)
-
-			eventText := "Remote peer " + c.String("dns-server") + " is not reachable"
-			notification := notifications.NewDiggerNotification(
-				"Connectivity Issue",
-				eventText,
-			)
-
-			err = notification.FireEvent(c)
+			notification := notifications.Notification{
+				Title: "Connectivity Issue",
+				Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
+			}
+			err = notifier.FireEvent(c, notification)
 
 			if err != nil {
 				log.Errorf("An error occured when sending an event to Datadog: %v", err)
@@ -107,11 +114,4 @@ func runLoop(c *cli.Context, client DNSClient) (err error) {
 		time.Sleep(intervalDuration)
 	}
 
-}
-
-// runTest execute the DNS query.
-func runTest(client DNSClient, target string, server string) (duration time.Duration, err error) {
-	_, t, err := client.Exchange(target, server)
-
-	return t, err
 }

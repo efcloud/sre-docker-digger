@@ -1,18 +1,41 @@
 package dd
 
 import (
+	"digger/notifications"
+
+	"github.com/urfave/cli"
 	"github.com/zorkian/go-datadog-api"
 )
 
-// PostEvent fire an event to Datadog
-func PostEvent(apiKey string, appKey string, event *datadog.Event) (postedEvent *datadog.Event, err error) {
-	client := datadog.NewClient(apiKey, appKey)
+type datadogNotifier struct{}
 
-	postedEvent, err = client.PostEvent(event)
+// NewNotification constructor for Notification
+func NewNotification() notifications.Notifier {
+	return &datadogNotifier{}
+}
 
-	if err != nil {
-		return nil, err
+// FireEvent function to post an event in Datadog
+func (event *datadogNotifier) FireEvent(c *cli.Context, notification notifications.Notification) (err error) {
+
+	client := datadog.NewClient(c.GlobalString("dd-api-key"), c.GlobalString("dd-app-key"))
+
+	alertType := "error"
+	priority := "normal"
+
+	ddEvent := datadog.Event{
+		Title: &notification.Title,
+		Text:  &notification.Text,
+		// TODO: Need to use a flag to pass tags
+		Tags:      []string{"environment:dev", "team:sre"},
+		AlertType: &alertType,
+		Priority:  &priority,
 	}
 
-	return postedEvent, nil
+	_, err = client.PostEvent(&ddEvent)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

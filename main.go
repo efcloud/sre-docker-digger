@@ -40,7 +40,7 @@ func runCli() (app *cli.App) {
 		},
 	}
 	app.Commands = []cli.Command{
-		commands.CheckCmd,
+		commands.CheckDNSCmd,
 	}
 
 	return

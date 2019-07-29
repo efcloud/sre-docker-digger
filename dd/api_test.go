@@ -1,13 +1,14 @@
 package dd
 
 import (
-	"encoding/json"
+	"digger/notifications"
+	"flag"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
-	"github.com/zorkian/go-datadog-api"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 `)
 )
 
-// TestPostEventReturnCodeKO test function for PostEvent() handle correctly return code.
+// TestPostEventReturnCodeOK test function for PostEvent() handle correctly return code.
 func TestPostEventReturnCodeOK(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -28,11 +29,19 @@ func TestPostEventReturnCodeOK(t *testing.T) {
 
 	os.Setenv("DATADOG_HOST", ts.URL)
 
-	ddEvent := datadog.Event{}
+	event := NewNotification()
 
-	_ = json.Unmarshal([]byte(eventPayload), &ddEvent)
+	notification := notifications.Notification{
+		Title: "Test",
+		Text:  "Test text",
+	}
 
-	_, err := PostEvent("foo", "bar", &ddEvent)
+	set := flag.NewFlagSet("test", 0)
+	set.String("dd-api-key", "foo", "doc")
+	set.String("dd-app-key", "bar", "doc")
+	context := cli.NewContext(nil, set, nil)
+
+	err := event.FireEvent(context, notification)
 
 	if err != nil {
 		t.Errorf("PostEvent() should not have returned an error: %v", err)
@@ -49,11 +58,19 @@ func TestPostEventReturnCodeKO(t *testing.T) {
 
 	os.Setenv("DATADOG_HOST", ts.URL)
 
-	ddEvent := datadog.Event{}
+	event := NewNotification()
 
-	_ = json.Unmarshal([]byte(eventPayload), &ddEvent)
+	notification := notifications.Notification{
+		Title: "Test",
+		Text:  "Test text",
+	}
 
-	_, err := PostEvent("foo", "bar", &ddEvent)
+	set := flag.NewFlagSet("test", 0)
+	set.String("dd-api-key", "foo", "doc")
+	set.String("dd-app-key", "bar", "doc")
+	context := cli.NewContext(nil, set, nil)
+
+	err := event.FireEvent(context, notification)
 
 	if err == nil {
 		t.Errorf("PostEvent() should have returned an error")

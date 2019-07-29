@@ -27,7 +27,7 @@ func TestRunCli(t *testing.T) {
 
 	for _, command := range c.Commands {
 		switch command.Name {
-		case "check":
+		case "check-dns":
 			checkCommand = true
 		default:
 			t.Errorf("Unexpected command '%s'", command.Name)
@@ -35,7 +35,7 @@ func TestRunCli(t *testing.T) {
 	}
 
 	if !checkCommand {
-		t.Errorf("Command 'deleteCommand' is not defined")
+		t.Errorf("Command 'check-dns' is not defined")
 	}
 
 	for _, flag := range c.Flags {
