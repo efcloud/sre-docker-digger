@@ -106,6 +106,31 @@ func TestRealActionCheckNoDatadog(t *testing.T) {
 	}
 }
 
+// TestRealActionCheckDatadog function to test realActionCheck()
+func TestRealActionCheckDatadog(t *testing.T) {
+
+	globalSet := flag.NewFlagSet("test", 0)
+	globalSet.String("datadog-enable", "true", "doc")
+	globalContext := cli.NewContext(nil, globalSet, nil)
+
+	set := flag.NewFlagSet("test", 0)
+	set.String("interval", "2s", "doc")
+	set.String("count", "1", "doc")
+	context := cli.NewContext(nil, set, globalContext)
+
+	err := realActionCheck(context, NewMyDNSClientKOMock(), NewdDatadogNotifierMock())
+
+	if err != nil {
+		t.Errorf("realActionCheck() should not have returned an error: %v", err)
+	}
+
+	if callToDatadogFireEvent < 1 {
+		t.Error("FireEvent() has not been called when it should")
+	}
+
+	callToDatadogFireEvent = 0
+}
+
 // TestRealActionCheckDatadog function to test runLoop() when Datadog is configured and should not be called
 func TestRunLoopCheckDatadogNotCalled(t *testing.T) {
 
