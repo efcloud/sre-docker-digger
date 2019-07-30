@@ -69,7 +69,7 @@ var CheckDNSCmd = cli.Command{
 		},
 		cli.StringFlag{
 			Name:   "count",
-			Usage:  "Number of check to run.",
+			Usage:  "Number of check to run. '0' run the test forever.",
 			EnvVar: "COUNT",
 			Value:  "0",
 		},

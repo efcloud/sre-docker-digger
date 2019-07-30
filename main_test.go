@@ -12,6 +12,7 @@ func TestRunCli(t *testing.T) {
 	var (
 		ddAPIKeyFlag      bool
 		ddAppKeyFlag      bool
+		ddTagFlag         bool
 		datadogEnableFlag bool
 		checkCommand      bool
 	)
@@ -46,6 +47,8 @@ func TestRunCli(t *testing.T) {
 				ddAppKeyFlag = true
 			case "dd-api-key":
 				ddAPIKeyFlag = true
+			case "dd-tags":
+				ddTagFlag = true
 			case "datadog-enable":
 				datadogEnableFlag = true
 
@@ -62,6 +65,10 @@ func TestRunCli(t *testing.T) {
 
 	if !ddAppKeyFlag {
 		t.Errorf("Flag 'dd-app-key' is not defined")
+	}
+
+	if !ddTagFlag {
+		t.Errorf("Flag 'dd-tags' is not defined")
 	}
 
 	if !datadogEnableFlag {

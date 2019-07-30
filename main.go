@@ -38,6 +38,11 @@ func runCli() (app *cli.App) {
 			Usage:  "Datadog Application key",
 			EnvVar: "DATADOG_APP_KEY",
 		},
+		cli.StringFlag{
+			Name:   "dd-tags",
+			Usage:  "Datadog tags, tags must be seperated by ','. For instance 'mytag1, key:value'.",
+			EnvVar: "DATADOG_TAGS",
+		},
 	}
 	app.Commands = []cli.Command{
 		commands.CheckDNSCmd,

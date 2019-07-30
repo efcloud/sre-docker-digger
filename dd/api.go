@@ -2,6 +2,7 @@ package dd
 
 import (
 	"digger/notifications"
+	"strings"
 
 	"github.com/urfave/cli"
 	"github.com/zorkian/go-datadog-api"
@@ -21,12 +22,12 @@ func (event *datadogNotifier) FireEvent(c *cli.Context, notification notificatio
 
 	alertType := "error"
 	priority := "normal"
+	tags := parseTag(c.GlobalString("dd-tags"))
 
 	ddEvent := datadog.Event{
-		Title: &notification.Title,
-		Text:  &notification.Text,
-		// TODO: Need to use a flag to pass tags
-		Tags:      []string{"environment:dev", "team:sre"},
+		Title:     &notification.Title,
+		Text:      &notification.Text,
+		Tags:      tags,
 		AlertType: &alertType,
 		Priority:  &priority,
 	}
@@ -38,4 +39,11 @@ func (event *datadogNotifier) FireEvent(c *cli.Context, notification notificatio
 	}
 
 	return nil
+}
+
+func parseTag(s string) []string {
+
+	tags := strings.Split(s, ",")
+
+	return tags
 }

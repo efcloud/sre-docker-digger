@@ -76,3 +76,22 @@ func TestPostEventReturnCodeKO(t *testing.T) {
 		t.Errorf("PostEvent() should have returned an error")
 	}
 }
+
+// TestParseTag function to test parseTag()
+func TestParseTag(t *testing.T) {
+
+	expectedTags := []string{"foo:bar", "titi:toto"}
+
+	returnedTags := parseTag("foo:bar,titi:toto")
+
+	if len(returnedTags) != len(expectedTags) {
+		t.Errorf("parseTag() should have returned a list of %d elements, got %d", len(expectedTags), len(returnedTags))
+	}
+
+	for i, v := range expectedTags {
+		if v != returnedTags[i] {
+			t.Errorf("parseTag() should have returned a list  with the following element %s, got %s", expectedTags[i], returnedTags[i])
+		}
+	}
+
+}
