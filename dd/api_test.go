@@ -20,8 +20,28 @@ const (
 `)
 )
 
-// TestPostEventReturnCodeOK test function for PostEvent() handle correctly return code.
-func TestPostEventReturnCodeOK(t *testing.T) {
+// TestFireEventReturnCodeOK test function for FireEvent() returns an error when creds are absent.
+func TestFireEventKO(t *testing.T) {
+
+	event := NewNotification()
+
+	notification := notifications.Notification{
+		Title: "Test",
+		Text:  "Test text",
+	}
+
+	set := flag.NewFlagSet("test", 0)
+	context := cli.NewContext(nil, set, nil)
+
+	err := event.FireEvent(context, notification)
+
+	if err == nil {
+		t.Errorf("FireEvent() should have returned an error")
+	}
+}
+
+// TestFireEventReturnCodeOK test function for FireEvent() handle correctly return code.
+func TestFireEventReturnCodeOK(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -45,12 +65,12 @@ func TestPostEventReturnCodeOK(t *testing.T) {
 	err := event.FireEvent(context, notification)
 
 	if err != nil {
-		t.Errorf("PostEvent() should not have returned an error: %v", err)
+		t.Errorf("FireEvent() should not have returned an error: %v", err)
 	}
 }
 
-// TestPostEventReturnCodeKO test function for PostEvent() handle correctly return code.
-func TestPostEventReturnCodeKO(t *testing.T) {
+// TestFireEventReturnCodeKO test function for FireEvent() handle correctly return code.
+func TestFireEventReturnCodeKO(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -74,7 +94,7 @@ func TestPostEventReturnCodeKO(t *testing.T) {
 	err := event.FireEvent(context, notification)
 
 	if err == nil {
-		t.Errorf("PostEvent() should have returned an error")
+		t.Errorf("FireEvent() should have returned an error")
 	}
 }
 
