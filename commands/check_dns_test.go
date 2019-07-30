@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
 
@@ -190,7 +191,6 @@ func TestRunLoopCheckWrongInterval(t *testing.T) {
 	if err == nil {
 		t.Error("realActionCheck() should have returned an error")
 	}
-
 }
 
 // TestRunDNSCheck function to test runDNSCheck() when fireEvent() returns an error
@@ -206,5 +206,13 @@ func TestRunDNSCheck(t *testing.T) {
 	if err == nil {
 		t.Error("runDNSCheck() should have returned an error")
 	}
+}
 
+// TestNewMyDNSClient function to test NewMyDNSClient()
+func TestNewMyDNSClient(t *testing.T) {
+	client := NewMyDNSClient()
+
+	if reflect.TypeOf(client).String() != "*commands.MyDNSClient" {
+		t.Error("NewMyDNSClient() should return an object of type MyDNSClient")
+	}
 }
