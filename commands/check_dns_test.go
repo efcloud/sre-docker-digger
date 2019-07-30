@@ -216,3 +216,25 @@ func TestNewMyDNSClient(t *testing.T) {
 		t.Error("NewMyDNSClient() should return an object of type MyDNSClient")
 	}
 }
+
+// TestExchange function to test Exchange()
+func TestExchangeKO(t *testing.T) {
+	client := NewMyDNSClient()
+
+	_, _, err := client.Exchange("failedtest.example", "192.168.1.1")
+
+	if err == nil {
+		t.Error("Exchange() should have returned and error")
+	}
+}
+
+// TestExchange function to test Exchange()
+func TestExchangeOK(t *testing.T) {
+	client := NewMyDNSClient()
+
+	_, _, err := client.Exchange("google.co.uk", "8.8.8.8")
+
+	if err != nil {
+		t.Error("Exchange() should not have returned and error")
+	}
+}
