@@ -10,6 +10,9 @@ FROM alpine:3.9 as final
 
 ENV DATADOG_HOST=https://api.datadoghq.eu
 
+RUN apk update && \
+  apk add ca-certificates
+  
 WORKDIR /app
 
 COPY --from=builder /go/src/digger/digger /usr/local/bin/digger
