@@ -18,6 +18,7 @@ func main() {
 func runCli() (app *cli.App) {
 	app = cli.NewApp()
 	app.Name = "digger"
+	app.Usage = ""
 	app.HelpName = "CLI tool to check network connectivity."
 	app.Version = version
 
