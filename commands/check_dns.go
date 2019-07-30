@@ -3,6 +3,7 @@ package commands
 import (
 	"digger/dd"
 	"digger/notifications"
+	"strconv"
 	"time"
 
 	"github.com/miekg/dns"
@@ -66,17 +67,23 @@ var CheckDNSCmd = cli.Command{
 			EnvVar: "INTERVAL",
 			Value:  "60s",
 		},
+		cli.StringFlag{
+			Name:   "count",
+			Usage:  "Number of check to run.",
+			EnvVar: "COUNT",
+			Value:  "0",
+		},
 	},
 }
 
 // actionCheck placeholder function
 func actionCheck(c *cli.Context) (err error) {
-	return realActionCheck(c, dd.NewNotification())
+	return realActionCheck(c, NewMyDNSClient(), dd.NewNotification())
 }
 
-func realActionCheck(c *cli.Context, datadogNotifier notifications.Notifier) (err error) {
+func realActionCheck(c *cli.Context, client DNSClient, datadogNotifier notifications.Notifier) (err error) {
 	if c.GlobalString("datadog-enable") == "true" {
-		return runLoop(c, NewMyDNSClient(), datadogNotifier)
+		return runLoop(c, client, datadogNotifier)
 	}
 
 	return nil
@@ -88,30 +95,62 @@ func runLoop(c *cli.Context, client DNSClient, notifier notifications.Notifier) 
 	intervalDuration, err := time.ParseDuration(c.String("interval"))
 
 	if err != nil {
-		log.Error("Interval is correct it should be a duration in the following format '60s' or '5m'")
+		log.Error("Interval is not correct it should be a duration in the following format '60s' or '5m'")
+
+		return err
 	}
 
-	for {
-		_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
-		// runTest(client, c, c.String("dns-server"))
-		log.Infof("Latency is %s", t)
-		if err != nil {
+	count, _ := strconv.Atoi(c.String("count"))
 
-			log.Error("Not able to reach remote DNS server, ", err)
-			notification := notifications.Notification{
-				Title: "Connectivity Issue",
-				Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
-			}
-			err = notifier.FireEvent(c, notification)
-
+	if count == 0 {
+		for {
+			_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
+			// runTest(client, c, c.String("dns-server"))
+			log.Infof("Latency is %s", t)
 			if err != nil {
-				log.Errorf("An error occured when sending an event to Datadog: %v", err)
-			} else {
-				log.Info("Datadog event has been sent")
-			}
 
+				log.Error("Not able to reach remote DNS server, ", err)
+				notification := notifications.Notification{
+					Title: "Connectivity Issue",
+					Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
+				}
+				err = notifier.FireEvent(c, notification)
+
+				if err != nil {
+					log.Errorf("An error occured when sending an event to Datadog: %v", err)
+				} else {
+					log.Info("Datadog event has been sent")
+				}
+
+			}
+			time.Sleep(intervalDuration)
 		}
-		time.Sleep(intervalDuration)
+	} else {
+		i := 0
+		for i < count {
+			_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
+			// runTest(client, c, c.String("dns-server"))
+			log.Infof("Latency is %s", t)
+			if err != nil {
+
+				log.Error("Not able to reach remote DNS server, ", err)
+				notification := notifications.Notification{
+					Title: "Connectivity Issue",
+					Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
+				}
+				err = notifier.FireEvent(c, notification)
+
+				if err != nil {
+					log.Errorf("An error occured when sending an event to Datadog: %v", err)
+				} else {
+					log.Info("Datadog event has been sent")
+				}
+
+			}
+			time.Sleep(intervalDuration)
+			i++
+		}
 	}
 
+	return nil
 }
