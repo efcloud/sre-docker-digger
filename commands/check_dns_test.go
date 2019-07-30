@@ -86,8 +86,8 @@ func TestRealActionCheckNoDatadog(t *testing.T) {
 	}
 }
 
-// TestRealActionCheckDatadog function to test realActionCheck when Datadog is configured and should not be called
-func TestRealActionCheckDatadogNotCalled(t *testing.T) {
+// TestRealActionCheckDatadog function to test runLoop() when Datadog is configured and should not be called
+func TestRunLoopCheckDatadogNotCalled(t *testing.T) {
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.String("datadog-enable", "true", "doc")
@@ -98,9 +98,7 @@ func TestRealActionCheckDatadogNotCalled(t *testing.T) {
 	set.String("count", "1", "doc")
 	context := cli.NewContext(nil, set, globalContext)
 
-	fmt.Printf("local context: %s \n global context %s\n", context.String("interval"), context.GlobalString("datadog-enable"))
-
-	err := realActionCheck(context, NewMyDNSClientMock(), NewdDatadogNotifierMock())
+	err := runLoop(context, NewMyDNSClientMock(), NewdDatadogNotifierMock())
 
 	if err != nil {
 		t.Errorf("realActionCheck() should not have returned an error: %v", err)
@@ -111,8 +109,8 @@ func TestRealActionCheckDatadogNotCalled(t *testing.T) {
 	}
 }
 
-// TestRealActionCheckDatadog function to test realActionCheck when Datadog is configured and should be called
-func TestRealActionCheckDatadogCalled(t *testing.T) {
+// TestRealActionCheckDatadog function to test runLoop()onCheck when Datadog is configured and should be called
+func TestRunLoopCheckDatadogCalled(t *testing.T) {
 
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.String("datadog-enable", "true", "doc")
@@ -123,9 +121,7 @@ func TestRealActionCheckDatadogCalled(t *testing.T) {
 	set.String("count", "1", "doc")
 	context := cli.NewContext(nil, set, globalContext)
 
-	fmt.Printf("local context: %s \n global context %s\n", context.String("interval"), context.GlobalString("datadog-enable"))
-
-	err := realActionCheck(context, NewMyDNSClientKOMock(), NewdDatadogNotifierMock())
+	err := runLoop(context, NewMyDNSClientKOMock(), NewdDatadogNotifierMock())
 
 	if err != nil {
 		t.Errorf("realActionCheck() should not have returned an error: %v", err)
@@ -134,4 +130,20 @@ func TestRealActionCheckDatadogCalled(t *testing.T) {
 	if callToDatadogFireEvent < 1 {
 		t.Error("FireEvent() should have been called")
 	}
+}
+
+// TestRunLoopCheckWrongInterval function to test runLoop() when the passed interval is not correct
+func TestRunLoopCheckWrongInterval(t *testing.T) {
+
+	set := flag.NewFlagSet("test", 0)
+	set.String("interval", "a", "doc")
+	set.String("count", "1", "doc")
+	context := cli.NewContext(nil, set, nil)
+
+	err := runLoop(context, NewMyDNSClientMock(), NewdDatadogNotifierMock())
+
+	if err == nil {
+		t.Error("realActionCheck() should have returned an error")
+	}
+
 }
