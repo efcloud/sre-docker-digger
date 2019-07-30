@@ -39,6 +39,11 @@ func runCli() (app *cli.App) {
 			EnvVar: "DATADOG_APP_KEY",
 		},
 		cli.StringFlag{
+			Name:   "dd-creds-file",
+			Usage:  "File containning Datadog credentials.",
+			EnvVar: "DATADOG_CREDENTIALS_FILE",
+		},
+		cli.StringFlag{
 			Name:   "dd-tags",
 			Usage:  "Datadog tags, tags must be seperated by ','. For instance 'mytag1, key:value'.",
 			EnvVar: "DATADOG_TAGS",

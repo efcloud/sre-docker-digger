@@ -106,7 +106,7 @@ func runLoop(c *cli.Context, client DNSClient, notifier notifications.Notifier) 
 		for {
 			err := runDNSCheck(c, client, notifier)
 			if err != nil {
-				log.Errorf("Erorr occured during DNS check: %v", err)
+				log.Errorf("Error occured during DNS check: %v", err)
 			}
 			time.Sleep(intervalDuration)
 		}
@@ -115,7 +115,7 @@ func runLoop(c *cli.Context, client DNSClient, notifier notifications.Notifier) 
 		for i < count {
 			err := runDNSCheck(c, client, notifier)
 			if err != nil {
-				log.Errorf("Erorr occured during DNS check: %v", err)
+				log.Errorf("Error occured during DNS check: %v", err)
 			}
 
 			time.Sleep(intervalDuration)
