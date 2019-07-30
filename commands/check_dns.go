@@ -104,52 +104,49 @@ func runLoop(c *cli.Context, client DNSClient, notifier notifications.Notifier) 
 
 	if count == 0 {
 		for {
-			_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
-			// runTest(client, c, c.String("dns-server"))
-			log.Infof("Latency is %s", t)
+			err := runDNSCheck(c, client, notifier)
 			if err != nil {
-
-				log.Error("Not able to reach remote DNS server, ", err)
-				notification := notifications.Notification{
-					Title: "Connectivity Issue",
-					Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
-				}
-				err = notifier.FireEvent(c, notification)
-
-				if err != nil {
-					log.Errorf("An error occured when sending an event to Datadog: %v", err)
-				} else {
-					log.Info("Datadog event has been sent")
-				}
-
+				log.Errorf("Erorr occured during DNS check: %v", err)
 			}
 			time.Sleep(intervalDuration)
 		}
 	} else {
 		i := 0
 		for i < count {
-			_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
-			// runTest(client, c, c.String("dns-server"))
-			log.Infof("Latency is %s", t)
+			err := runDNSCheck(c, client, notifier)
 			if err != nil {
-
-				log.Error("Not able to reach remote DNS server, ", err)
-				notification := notifications.Notification{
-					Title: "Connectivity Issue",
-					Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
-				}
-				err = notifier.FireEvent(c, notification)
-
-				if err != nil {
-					log.Errorf("An error occured when sending an event to Datadog: %v", err)
-				} else {
-					log.Info("Datadog event has been sent")
-				}
-
+				log.Errorf("Erorr occured during DNS check: %v", err)
 			}
+
 			time.Sleep(intervalDuration)
 			i++
 		}
+	}
+
+	return nil
+}
+
+func runDNSCheck(c *cli.Context, client DNSClient, notifier notifications.Notifier) (err error) {
+
+	_, t, err := client.Exchange(c.String("target"), c.String("dns-server"))
+
+	log.Infof("Latency is %s", t)
+	if err != nil {
+
+		log.Error("Not able to reach remote DNS server, ", err)
+		notification := notifications.Notification{
+			Title: "Connectivity Issue",
+			Text:  "Remote peer " + c.String("dns-server") + " is not reachable",
+		}
+		err = notifier.FireEvent(c, notification)
+
+		if err != nil {
+			log.Error("An error occured when sending an event to Datadog")
+			return err
+		}
+
+		log.Info("Datadog event has been sent")
+
 	}
 
 	return nil
