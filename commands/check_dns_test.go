@@ -32,6 +32,26 @@ func (event *datadogNotifierMock) FireEvent(c *cli.Context, notification notific
 	return nil
 }
 
+// Setting up mock objects for Datadog API that returns an error
+type datadogNotifierKOMock struct{}
+
+// NewNotification constructor for Notification
+func NewdDatadogNotifierKOMock() notifications.Notifier {
+	return &datadogNotifierKOMock{}
+}
+
+var callToDatadogKOFireEvent int
+
+// FireEvent ...
+func (event *datadogNotifierKOMock) FireEvent(c *cli.Context, notification notifications.Notification) (err error) {
+
+	fmt.Print("run: datadogNotifierKOMock.FireEvent() \n")
+
+	callToDatadogKOFireEvent++
+
+	return errors.New("Expected error")
+}
+
 // Setting up mock objects for DNS API
 type MyDNSClientMock struct{}
 
@@ -144,6 +164,22 @@ func TestRunLoopCheckWrongInterval(t *testing.T) {
 
 	if err == nil {
 		t.Error("realActionCheck() should have returned an error")
+	}
+
+}
+
+// TestRunDNSCheck function to test runDNSCheck() when fireEvent() returns an error
+func TestRunDNSCheck(t *testing.T) {
+
+	set := flag.NewFlagSet("test", 0)
+	set.String("interval", "1s", "doc")
+	set.String("count", "1", "doc")
+	context := cli.NewContext(nil, set, nil)
+
+	err := runDNSCheck(context, NewMyDNSClientKOMock(), NewdDatadogNotifierKOMock())
+
+	if err == nil {
+		t.Error("runDNSCheck() should have returned an error")
 	}
 
 }

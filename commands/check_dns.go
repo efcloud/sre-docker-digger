@@ -141,7 +141,7 @@ func runDNSCheck(c *cli.Context, client DNSClient, notifier notifications.Notifi
 		err = notifier.FireEvent(c, notification)
 
 		if err != nil {
-			log.Error("An error occured when sending an event to Datadog")
+			log.Error("An error occured when firing an event")
 			return err
 		}
 
