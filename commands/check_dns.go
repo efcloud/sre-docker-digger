@@ -145,7 +145,7 @@ func runDNSCheck(c *cli.Context, client DNSClient, notifier notifications.Notifi
 			return err
 		}
 
-		log.Info("Datadog event has been sent")
+		log.Info("Event has been sent")
 
 	} else {
 		log.Info("Connectivity is up.")
