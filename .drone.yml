@@ -1,0 +1,132 @@
+---
+kind: pipeline
+name: setup
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: building base container
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make setup
+
+---
+kind: pipeline
+name: lint
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: lint
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make lint
+
+depends_on:
+  - setup
+
+---
+kind: pipeline
+name: unit test
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: unit test
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make test
+
+- name: upload coverage
+  image: renaudhager/go-ci:0.1.3
+  commands:
+    - /usr/local/bin/codecov.bash
+  environment:
+    CODECOV_TOKEN:
+      from_secret: CODECOV_TOKEN
+
+depends_on:
+  - setup
+
+---
+kind: pipeline
+name: build
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: building application
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make build-app
+
+- name: building container
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make build
+
+depends_on:
+  - lint
+  - unit test
+
+---
+kind: pipeline
+name: publish unreleased version
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: docker tag
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make tag
+
+
+- name: docker publish
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make publish
+
+trigger:
+  event:
+    exclude:
+    - tag
+
+depends_on:
+  - build
+
+---
+kind: pipeline
+name: publish released version
+clone:
+  git:
+    image: plugins/git
+    tags: true
+
+steps:
+- name: docker tag relase
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make tag_release
+
+- name: docker publish release
+  image: efcloudsre/docker-ci:0.1.0
+  commands:
+  - make publish_release
+
+trigger:
+  event:
+    - tag
+
+depends_on:
+  - build
