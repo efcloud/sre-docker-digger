@@ -1,6 +1,6 @@
 # Digger
 
-[![Build Status](https://drone.eu-west-1.edtech.sre.ef-cloud.io/api/badges/efcloud/sre-docker-digger/status.svg)](https://drone.eu-west-1.edtech.sre.ef-cloud.io/efcloud/sre-docker-digger) [![Go Report Card](https://goreportcard.com/badge/github.com/refcloud/sre-docker-digger)](https://goreportcard.com/report/efcloud/sre-docker-digger/dogsitter)
+[![Build Status](https://drone.eu-west-1.edtech.sre.ef-cloud.io/api/badges/efcloud/sre-docker-digger/status.svg)](https://drone.eu-west-1.edtech.sre.ef-cloud.io/efcloud/sre-docker-digger) [![Go Report Card](https://goreportcard.com/badge/github.com/efcloud/sre-docker-digger)](https://goreportcard.com/report/efcloud/sre-docker-digger)
 [![codecov](https://codecov.io/gh/efcloud/sre-docker-digger/branch/master/graph/badge.svg)](https://codecov.io/gh/efcloud/sre-docker-digger)
 
 

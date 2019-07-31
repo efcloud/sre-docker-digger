@@ -46,7 +46,7 @@ func runCli() (app *cli.App) {
 		},
 		cli.StringFlag{
 			Name:   "dd-tags",
-			Usage:  "Datadog tags, tags must be seperated by ','. For instance 'mytag1, key:value'.",
+			Usage:  "Datadog tags, tags must be separated by ','. For instance 'mytag1, key:value'.",
 			EnvVar: "DATADOG_TAGS",
 		},
 	}

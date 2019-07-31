@@ -9,7 +9,7 @@ type Notifier interface {
 	FireEvent(c *cli.Context, notification Notification) (err error)
 }
 
-// Notification defintion of Notification object
+// Notification definition of Notification object
 type Notification struct {
 	Title string `json:"title,omitempty"`
 	Text  string `json:"text,omitempty"`
