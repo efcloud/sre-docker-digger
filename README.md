@@ -59,11 +59,11 @@ OPTIONS:
 ## Notifications
 
 ### Datadog
-If want this to notify Datadog when the connectivity is not working set `--datadog-enable` to `true`.  
+If you want digger to notify Datadog when the connectivity is not working set `--datadog-enable` to `true`.  
 
-To pass Datadog credentials you can either use the CLI flags `--dd-api-key` and `--dd-app-key` or pass a file contaning those keys using this flag `--dd-creds-file`.
+To pass Datadog credentials you can either use the CLI flags `--dd-api-key` and `--dd-app-key` or pass a file containing those keys using this flag `--dd-creds-file`.
 
-The file need to be like this (order does not matter):
+The file needs to be like this (order does not matter):
 ```
 DATADOG_API_KEY=XXX
 DATADOG_APP_KEY=XXX
