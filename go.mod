@@ -6,7 +6,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/miekg/dns v1.1.16
 	github.com/sirupsen/logrus v1.4.2
-	github.com/urfave/cli v1.21.0
+	github.com/urfave/cli v1.22.0
 	github.com/zorkian/go-datadog-api v2.23.0+incompatible
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
