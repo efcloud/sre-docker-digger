@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/miekg/dns v1.1.16
+	github.com/miekg/dns v1.1.17
 	github.com/sirupsen/logrus v1.4.2
 	github.com/urfave/cli v1.21.0
 	github.com/zorkian/go-datadog-api v2.23.0+incompatible
