@@ -9,8 +9,8 @@ else
 	IMAGE_VERSION = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 endif
 
-ifdef GIT_TAG
-	GIT_TAG = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null)
+ifdef GIT_SHORT_COMMIT
+	GIT_SHORT_COMMIT = $(shell git rev-parse --short HEAD 2>/dev/null)
 endif
 
 .PHONY: in-docker-lint
@@ -65,7 +65,7 @@ build:
 
 .PHONY: tag
 tag:
-	docker tag "$(IMAGE_NAME):$(IMAGE_VERSION)" "$(IMAGE_NAME):$(GIT_TAG)"
+	docker tag "$(IMAGE_NAME):$(IMAGE_VERSION)" "$(IMAGE_NAME):$(GIT_SHORT_COMMIT)"
 
 .PHONY: tag_release
 tag_release:
@@ -74,7 +74,7 @@ tag_release:
 .PHONY: publish
 publish:
 	docker push "$(IMAGE_NAME):$(IMAGE_VERSION)"
-	docker push "$(IMAGE_NAME):$(GIT_TAG)"
+	docker push "$(IMAGE_NAME):$(GIT_SHORT_COMMIT)"
 
 .PHONY: publish_release
 publish_release:
