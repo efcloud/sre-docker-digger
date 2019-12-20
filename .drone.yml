@@ -89,7 +89,6 @@ steps:
 - name: docker tag
   image: efcloudsre/docker-ci:0.1.0
   commands:
-  - env
   - make tag
 
 
