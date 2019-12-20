@@ -10,10 +10,6 @@ else
 	IMAGE_VERSION = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 endif
 
-# ifdef GIT_SHORT_COMMIT
-
-# endif
-
 .PHONY: in-docker-lint
 in-docker-lint:
 	golint -set_exit_status .
