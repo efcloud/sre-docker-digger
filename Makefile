@@ -75,7 +75,6 @@ tag_release:
 .PHONY: publish
 publish:
 	docker push "$(IMAGE_NAME):$(VERSION)"
-	docker push "$(IMAGE_NAME):$(DRONE_BRANCH)"
 
 .PHONY: publish_release
 publish_release:
