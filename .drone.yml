@@ -86,10 +86,10 @@ clone:
     tags: true
 
 steps:
-- name: docker tag
-  image: efcloudsre/docker-ci:0.1.0
-  commands:
-  - make tag
+# - name: docker tag
+#   image: efcloudsre/docker-ci:0.1.0
+#   commands:
+#   - make tag
 
 
 - name: docker publish
