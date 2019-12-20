@@ -2,17 +2,13 @@ NAME       := digger
 IMAGE_NAME := 479788333518.dkr.ecr.eu-west-1.amazonaws.com/efcloud/sre/digger
 VERSION    :=$(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 LDFLAGS    := -w -extldflags "-static" -X 'main.version=$(VERSION)'
+GIT_SHORT_COMMIT :=$(shell git rev-parse --short HEAD 2>/dev/null)
 
-ifndef DRONE_TAG
-	VERSION :=$(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
+ifdef DRONE_BRANCH
+	IMAGE_VERSION = $(DRONE_BRANCH)_$(DRONE_BUILD_NUMBER)
 else
-	VERSION := $(DRONE_TAG)
+	IMAGE_VERSION = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 endif
-
-ifndef DRONE_BUILD_NUMBER
-	DRONE_BUILD_NUMBER := 0
-endif
-
 
 .PHONY: in-docker-lint
 in-docker-lint:
@@ -31,20 +27,20 @@ in-docker-build-app:
 .PHONY: setup
 setup:
 	docker build \
-		--tag="$(IMAGE_NAME):$(VERSION)_setup" \
+		--tag="$(IMAGE_NAME):$(IMAGE_VERSION)_setup" \
 		--file Dockerfile_base .
 
 .PHONY: lint
 lint:
 	docker run --rm \
-		"$(IMAGE_NAME):$(VERSION)_setup" \
+		"$(IMAGE_NAME):$(IMAGE_VERSION)_setup" \
 		make in-docker-lint
 
 .PHONY: test
 test:
 	docker run \
 		--name "test-$(DRONE_BUILD_NUMBER)" \
-		"$(IMAGE_NAME):$(VERSION)_setup" \
+		"$(IMAGE_NAME):$(IMAGE_VERSION)_setup" \
 		make in-docker-test
 
 	docker cp "test-$(DRONE_BUILD_NUMBER)":/tmp/coverage.out .
@@ -53,29 +49,29 @@ test:
 .PHONY: build-app
 build-app:
 	docker build \
-	--build-arg SOURCE="$(IMAGE_NAME):$(VERSION)_setup" \
-	--tag="$(IMAGE_NAME):$(VERSION)" \
+	--build-arg SOURCE="$(IMAGE_NAME):$(IMAGE_VERSION)_setup" \
+	--tag="$(IMAGE_NAME):$(IMAGE_VERSION)" \
 	--target=builder .
 
 .PHONY: build
 build:
 	docker build \
-	--build-arg SOURCE="$(IMAGE_NAME):$(VERSION)_setup" \
-	--tag="$(IMAGE_NAME):$(VERSION)" \
+	--build-arg SOURCE="$(IMAGE_NAME):$(IMAGE_VERSION)_setup" \
+	--tag="$(IMAGE_NAME):$(IMAGE_VERSION)" \
 	--target=final .
 
 .PHONY: tag
 tag:
-	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(DRONE_BRANCH)"
+	docker tag "$(IMAGE_NAME):$(IMAGE_VERSION)" "$(IMAGE_NAME):$(GIT_SHORT_COMMIT)"
 
 .PHONY: tag_release
 tag_release:
-	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(DRONE_TAG)"
+	docker tag "$(IMAGE_NAME):$(IMAGE_VERSION)" "$(IMAGE_NAME):$(DRONE_TAG)"
 
 .PHONY: publish
 publish:
-	docker push "$(IMAGE_NAME):$(VERSION)"
-	docker push "$(IMAGE_NAME):$(DRONE_BRANCH)"
+	docker push "$(IMAGE_NAME):$(IMAGE_VERSION)"
+	docker push "$(IMAGE_NAME):$(GIT_SHORT_COMMIT)"
 
 .PHONY: publish_release
 publish_release:
