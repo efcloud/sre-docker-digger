@@ -3,6 +3,7 @@ IMAGE_NAME := 479788333518.dkr.ecr.eu-west-1.amazonaws.com/efcloud/sre/digger
 VERSION    :=$(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 LDFLAGS    := -w -extldflags "-static" -X 'main.version=$(VERSION)'
 GIT_SHORT_COMMIT :=$(shell git rev-parse --short HEAD 2>/dev/null)
+
 ifdef DRONE_BRANCH
 	IMAGE_VERSION = $(DRONE_BRANCH)_$(DRONE_BUILD_NUMBER)
 else
