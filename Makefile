@@ -65,7 +65,7 @@ build:
 
 .PHONY: tag
 tag:
-	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(GIT_BRANCH)_$(DRONE_BUILD_NUMBER)"
+	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(GIT_TAG)"
 
 .PHONY: tag_release
 tag_release:
@@ -74,7 +74,7 @@ tag_release:
 .PHONY: publish
 publish:
 	docker push "$(IMAGE_NAME):$(VERSION)"
-	docker push "$(IMAGE_NAME):$(GIT_BRANCH)_$(DRONE_BUILD_NUMBER)"
+	docker push "$(IMAGE_NAME):$(GIT_TAG)"
 
 .PHONY: publish_release
 publish_release:
