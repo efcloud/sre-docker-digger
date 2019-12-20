@@ -3,20 +3,14 @@ IMAGE_NAME := 479788333518.dkr.ecr.eu-west-1.amazonaws.com/efcloud/sre/digger
 VERSION    :=$(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
 LDFLAGS    := -w -extldflags "-static" -X 'main.version=$(VERSION)'
 
-ifndef DRONE_TAG
-	VERSION :=$(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
-else
-	VERSION := $(DRONE_TAG)
-endif
-
-ifndef DRONE_BUILD_NUMBER
-	DRONE_BUILD_NUMBER := 0
-endif
-
 ifdef DRONE_BRANCH
-	GIT_BRANCH = $(DRONE_BRANCH)
+	IMAGE_VERSION = $(DRONE_BRANCH)_$(DRONE_BUILD_NUMBER)
 else
-	GIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
+	IMAGE_VERSION = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)
+endif
+
+ifdef GIT_TAG
+	GIT_TAG = $(shell git describe --abbrev=0 --tags --exact-match 2>/dev/null)
 endif
 
 .PHONY: in-docker-lint
