@@ -13,6 +13,11 @@ ifndef DRONE_BUILD_NUMBER
 	DRONE_BUILD_NUMBER := 0
 endif
 
+ifdef DRONE_BRANCH
+	GIT_BRANCH = $(DRONE_BRANCH)
+else
+	GIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
+endif
 
 .PHONY: in-docker-lint
 in-docker-lint:
@@ -66,7 +71,7 @@ build:
 
 .PHONY: tag
 tag:
-	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(DRONE_BRANCH)"
+	docker tag "$(IMAGE_NAME):$(VERSION)" "$(IMAGE_NAME):$(GIT_BRANCH)_$(DRONE_BUILD_NUMBER)"
 
 .PHONY: tag_release
 tag_release:
@@ -75,7 +80,7 @@ tag_release:
 .PHONY: publish
 publish:
 	docker push "$(IMAGE_NAME):$(VERSION)"
-	docker push "$(IMAGE_NAME):$(DRONE_BRANCH)"
+	docker push "$(IMAGE_NAME):$(GIT_BRANCH)_$(DRONE_BUILD_NUMBER)"
 
 .PHONY: publish_release
 publish_release:
