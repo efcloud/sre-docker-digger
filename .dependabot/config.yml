@@ -5,4 +5,3 @@ update_configs:
     update_schedule: "daily"
     default_reviewers:
       - "renaudhager"
-      - "roccodonnarummaef"
