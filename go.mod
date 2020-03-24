@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/miekg/dns v1.1.27
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.5.0
 	github.com/urfave/cli v1.22.1
 	github.com/zorkian/go-datadog-api v2.25.0+incompatible
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
