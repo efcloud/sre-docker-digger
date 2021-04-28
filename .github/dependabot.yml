@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: gomod
+  directory: "/"
+  schedule:
+    interval: daily
+  pull-request-branch-name:
+    separator: "-"
+  open-pull-requests-limit: 10
+  reviewers:
+  - renaudhager
+  ignore:
+  - dependency-name: github.com/miekg/dns
+    versions:
+    - 1.1.37
+    - 1.1.38
+    - 1.1.39
+  - dependency-name: github.com/sirupsen/logrus
+    versions:
+    - 1.7.1
+    - 1.8.0
